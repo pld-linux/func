@@ -18,7 +18,8 @@ BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-func is a remote api for mangement, configation, and monitoring of systems.
+func is a remote api for mangement, configation, and monitoring of
+systems.
 
 %prep
 %setup -q
@@ -63,14 +64,14 @@ fi
 %attr(755,root,root) %{_bindir}/func-inventory
 %dir %{_sysconfdir}/%{name}
 %dir %{_sysconfdir}/%{name}/minion-acl.d/
-# TODO: move /etc/pki into FHS? It's used for key storage
+# TODO: move %{_sysconfdir}/pki into FHS? It's used for key storage
 %dir %{_sysconfdir}/pki
 %dir %{_sysconfdir}/pki/%{name}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/minion.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/certmaster.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/logrotate.d/func_rotate
-%attr(755,root,root) /etc/rc.d/init.d/certmaster
-%attr(755,root,root) /etc/rc.d/init.d/funcd
+%config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/func_rotate
+%attr(754,root,root) /etc/rc.d/init.d/certmaster
+%attr(754,root,root) /etc/rc.d/init.d/funcd
 %{py_sitescriptdir}/func-%{version}-py*.egg-info
 %{py_sitescriptdir}/func
 %{_mandir}/man1/*.1*
