@@ -9,6 +9,7 @@ Source0:	https://hosted.fedoraproject.org/projects/func/attachment/wiki/FuncRele
 # Source0-md5:	adf06e92209e2576bd44fa64641b8733
 Source1:	%{name}-funcd.init
 Source2:	%{name}-certmaster.init
+Patch0:		%{name}-setup.patch
 URL:		https://hosted.fedoraproject.org/projects/func/
 BuildRequires:	python >= 1:2.5
 BuildRequires:	rpmbuild(macros) >= 1.219
@@ -23,6 +24,7 @@ systems.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 python setup.py build
