@@ -11,7 +11,7 @@ Source1:	%{name}-funcd.init
 Source2:	%{name}-certmaster.init
 Patch0:		%{name}-setup.patch
 URL:		https://hosted.fedoraproject.org/projects/func/
-BuildRequires:	python >= 1:2.5
+BuildRequires:	python
 BuildRequires:	rpmbuild(macros) >= 1.219
 Requires:	python-pyOpenSSL
 %pyrequires_eq	python-libs
@@ -74,6 +74,5 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/func_rotate
 %attr(754,root,root) /etc/rc.d/init.d/certmaster
 %attr(754,root,root) /etc/rc.d/init.d/funcd
-%{py_sitescriptdir}/func-%{version}-py*.egg-info
 %{py_sitescriptdir}/func
 %{_mandir}/man1/*.1*
