@@ -31,7 +31,7 @@ python setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d/funcd
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 
 python setup.py install \
 	--root=$RPM_BUILD_ROOT \

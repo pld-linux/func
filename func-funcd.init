@@ -1,48 +1,93 @@
 #!/bin/sh
 #
-# func:		Starts the func daemon
+# funcd	funcd short service description
 #
-# Version:	@(#) /etc/rc.d/init.d/func 0.1
+# chkconfig:	- 98 2
 #
-# chkconfig:	- 98 99
-# description:	Starts and stops the func daemon at startup and shutdown..
+# description:	funcd long service description
+#
+# $Id$
 
+# Source function library
 . /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Get service config - may override defaults
+[ -f /etc/sysconfig/funcd ] && . /etc/sysconfig/funcd
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+		msg_network_down funcd
+		exit 1
+	fi
+else
+	exit 0
+fi
+
+start() {
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/funcd ]; then
+		msg_starting funcd
+		daemon /usr/bin/funcd
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/funcd
+	else
+		msg_already_running funcd
+	fi
+}
+
+stop() {
+	if [ -f /var/lock/subsys/funcd ]; then
+		# Stop daemons.
+		msg_stopping funcd
+		killproc funcd
+		killproc --pidfile /var/run/funcd.pid funcd -TERM
+		rm -f /var/lock/subsys/funcd
+	else
+		msg_not_running funcd
+	fi
+}
+
+condrestart() {
+	if [ -f /var/lock/subsys/funcd ]; then
+		stop
+		start
+	else
+		if [ $1 -ne 0 ]; then
+			msg_not_running funcd
+		fi
+		RETVAL=$1
+	fi
+}
 
 RETVAL=0
 # See how we were called.
 case "$1" in
   start)
-	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/funcd ]; then
-		msg_starting "funcd"
-		daemon /usr/bin/funcd
-		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/funcd
-	else
-		msg_already_running "funcd"
-	fi
+  	start
 	;;
   stop)
-	if [ -f /var/lock/subsys/funcd ]; then
-		msg_stopping "funcd"
-		killproc funcd
-		rm -f /var/lock/subsys/funcd
-	else
-		msg_not_running "funcd"
-	fi
+  	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
 	;;
   status)
 	status funcd
-	exit $?
-	;;
-  restart|force-reload)
-	$0 stop
-	$0 start
-	exit $?
+	RETVAL=$?
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|force-reload|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
 	exit 3
 esac
 
