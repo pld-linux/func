@@ -1,3 +1,5 @@
+# TODO
+# - split funcd/certmaster
 %define		subver	.3
 Summary:	Fedora Unified Network Controller
 Name:		func
@@ -31,7 +33,7 @@ python setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d/funcd
+install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,/var/log/func}
 
 python setup.py install \
 	--root=$RPM_BUILD_ROOT \
@@ -76,3 +78,4 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/funcd
 %{py_sitescriptdir}/func
 %{_mandir}/man1/*.1*
+%dir /var/log/func
