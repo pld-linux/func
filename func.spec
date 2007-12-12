@@ -74,6 +74,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/func_rotate
 %attr(754,root,root) /etc/rc.d/init.d/certmaster
 %attr(754,root,root) /etc/rc.d/init.d/funcd
+%dir /var/log/func
 %{py_sitescriptdir}/func-%{version}-py*.egg-info
 %{py_sitescriptdir}/func
 %{_mandir}/man1/*.1*
