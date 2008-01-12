@@ -1,5 +1,6 @@
 %define		subver	.3
 Summary:	Fedora Unified Network Controller
+Summary(pl.UTF-8):	FUNC - jednolite sterowanie sieciowe Fedory
 Name:		func
 Version:	0.13
 Release:	1
@@ -19,8 +20,12 @@ BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-func is a remote api for mangement, configation, and monitoring of
-systems.
+FUNC (Fedora Unified Network Controller) is a remote API for
+management, configation, and monitoring of systems.
+
+%description -l pl.UTF-8
+FUNC (Fedora Unified Network Controller) to zdalne API do
+zarządzania, konfiguracji i monitorowania systemów.
 
 %prep
 %setup -q
