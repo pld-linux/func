@@ -31,7 +31,7 @@ start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/funcd ]; then
 		msg_starting funcd
-		daemon /usr/bin/funcd
+		daemon /usr/bin/funcd --daemon
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/funcd
 	else
@@ -43,7 +43,6 @@ stop() {
 	if [ -f /var/lock/subsys/funcd ]; then
 		# Stop daemons.
 		msg_stopping funcd
-		killproc funcd
 		killproc --pidfile /var/run/funcd.pid funcd -TERM
 		rm -f /var/lock/subsys/funcd
 	else
