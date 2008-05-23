@@ -1,19 +1,18 @@
-%define		subver	.3
 Summary:	Fedora Unified Network Controller
 Summary(pl.UTF-8):	FUNC - jednolite sterowanie sieciowe Fedory
 Name:		func
-Version:	0.13
-Release:	1
-License:	GPLv2+
+Version:	0.18
+Release:	0.1
+License:	GPL v2+
 Group:		Applications/System
-Source0:	https://hosted.fedoraproject.org/projects/func/attachment/wiki/FuncReleases/%{name}-%{version}.tar%{subver}.gz?format=raw
-# Source0-md5:	adf06e92209e2576bd44fa64641b8733
+Source0:	http://people.fedoraproject.org/~mdehaan/files/func/%{name}-%{version}.tar.gz
+# Source0-md5:	def199858286218daef908e871f2e7ca
 Source1:	%{name}-funcd.init
-Source2:	%{name}-certmaster.init
 Patch0:		%{name}-setup.patch
-URL:		https://hosted.fedoraproject.org/projects/func/
-BuildRequires:	python >= 1:2.5
+URL:		https://hosted.fedoraproject.org/func/
+BuildRequires:	python
 BuildRequires:	rpmbuild(macros) >= 1.219
+Requires:	certmaster >= 0.19
 Requires:	python-pyOpenSSL
 %pyrequires_eq	python-libs
 BuildArch:	noarch
@@ -32,17 +31,15 @@ zarządzania, konfiguracji i monitorowania systemów.
 %patch0 -p1
 
 %build
-python setup.py build
+%{__python} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-
-python setup.py install \
-	--root=$RPM_BUILD_ROOT \
-	--optimize=2
+install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,/var/log/func}
+%{__python} setup.py install \
+	--optimize=2 \
+	--root=$RPM_BUILD_ROOT
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/funcd
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/certmaster
 
 %py_postclean
 
@@ -50,14 +47,11 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/certmaster
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add certmaster
 /sbin/chkconfig --add funcd
 
 %preun
 if [ "$1" = "0" ]; then
-	%service certmaster stop
 	%service funcd stop
-	/sbin/chkconfig --del certmaster
 	/sbin/chkconfig --del funcd
 fi
 
@@ -66,20 +60,29 @@ fi
 %doc AUTHORS README
 %attr(755,root,root) %{_bindir}/funcd
 %attr(755,root,root) %{_bindir}/func
-%attr(755,root,root) %{_bindir}/certmaster
-%attr(755,root,root) %{_bindir}/certmaster-ca
 %attr(755,root,root) %{_bindir}/func-inventory
-%dir %{_sysconfdir}/%{name}
-%dir %{_sysconfdir}/%{name}/minion-acl.d/
-# TODO: move %{_sysconfdir}/pki into FHS? It's used for key storage
-%dir %{_sysconfdir}/pki
-%dir %{_sysconfdir}/pki/%{name}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/minion.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/certmaster.conf
+%attr(755,root,root) %{_bindir}/func-create-module
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/func_rotate
-%attr(754,root,root) /etc/rc.d/init.d/certmaster
 %attr(754,root,root) /etc/rc.d/init.d/funcd
-%dir /var/log/func
-%{py_sitescriptdir}/func-%{version}-py*.egg-info
-%{py_sitescriptdir}/func
+%dir %{_sysconfdir}/%{name}
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/minion.conf
+%dir %{py_sitescriptdir}/func
+%dir %{py_sitescriptdir}/func/minion
+%dir %{py_sitescriptdir}/func/minion/modules
+%dir %{py_sitescriptdir}/func/minion/modules/netapp
+%dir %{py_sitescriptdir}/func/minion/modules/netapp/vol
+%dir %{py_sitescriptdir}/func/overlord
+%dir %{py_sitescriptdir}/func/overlord/cmd_modules
+%dir %{py_sitescriptdir}/func/overlord/modules
+%{py_sitescriptdir}/func/*.py[co]
+%{py_sitescriptdir}/func/minion/*.py[co]
+%{py_sitescriptdir}/func/minion/modules/*.py[co]
+%{py_sitescriptdir}/func/minion/modules/netapp/*.py[co]
+%{py_sitescriptdir}/func/minion/modules/netapp/vol/*.py[co]
+%{py_sitescriptdir}/func/overlord/*.py[co]
+%{py_sitescriptdir}/func/overlord/cmd_modules/*.py[co]
+%{py_sitescriptdir}/func/overlord/modules/*.py[co]
+
 %{_mandir}/man1/*.1*
+
+%dir /var/log/func
