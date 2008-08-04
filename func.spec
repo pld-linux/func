@@ -1,12 +1,12 @@
 Summary:	Fedora Unified Network Controller
 Summary(pl.UTF-8):	FUNC - jednolite sterowanie sieciowe Fedory
 Name:		func
-Version:	0.18
+Version:	0.21
 Release:	0.2
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://people.fedoraproject.org/~mdehaan/files/func/%{name}-%{version}.tar.gz
-# Source0-md5:	def199858286218daef908e871f2e7ca
+# Source0-md5:	715638833720c85076fe04cd2e31fc32
 Source1:	%{name}-funcd.init
 Patch0:		%{name}-setup.patch
 URL:		https://hosted.fedoraproject.org/func/
