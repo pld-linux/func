@@ -9,11 +9,12 @@ Source0:	http://people.fedoraproject.org/~alikins/files/func/%{name}-%{version}.
 # Source0-md5:	892252004f122c61bb58bb4607553ffe
 Source1:	%{name}-funcd.init
 Patch0:		%{name}-setup.patch
-URL:		https://hosted.fedoraproject.org/func/
+URL:		https://fedorahosted.org/func/
 BuildRequires:	python
 BuildRequires:	rpmbuild(macros) >= 1.219
 Requires:	certmaster >= 0.25
 Requires:	python-pyOpenSSL
+Requires:	python-simplejson
 %pyrequires_eq	python-libs
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -23,8 +24,8 @@ FUNC (Fedora Unified Network Controller) is a remote API for
 management, configation, and monitoring of systems.
 
 %description -l pl.UTF-8
-FUNC (Fedora Unified Network Controller) to zdalne API do
-zarządzania, konfiguracji i monitorowania systemów.
+FUNC (Fedora Unified Network Controller) to zdalne API do zarządzania,
+konfiguracji i monitorowania systemów.
 
 %prep
 %setup -q
@@ -39,9 +40,10 @@ install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,/var/log/func}
 %{__python} setup.py install \
 	--optimize=2 \
 	--root=$RPM_BUILD_ROOT
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/funcd
 
 %py_postclean
+
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/funcd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -68,20 +70,15 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/func_rotate
 %attr(754,root,root) /etc/rc.d/init.d/funcd
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/minion.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/overlord.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/async_methods.conf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/func/modules/*
-%{py_sitescriptdir}/*.egg-info
-%{py_sitescriptdir}/func/*.py[co]
-%{py_sitescriptdir}/func/minion/*.py[co]
-%{py_sitescriptdir}/func/minion/modules/*.py[co]
-%{py_sitescriptdir}/func/minion/modules/iptables/*.py[co]
-%{py_sitescriptdir}/func/minion/modules/netapp/*.py[co]
-%{py_sitescriptdir}/func/minion/modules/netapp/vol/*.py[co]
-%{py_sitescriptdir}/func/overlord/*.py[co]
-%{py_sitescriptdir}/func/overlord/cmd_modules/*.py[co]
-%{py_sitescriptdir}/func/overlord/modules/*.py[co]
-%{py_sitescriptdir}/func/yaml/*.py[co]
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/async_methods.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/minion.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/overlord.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/modules/Bridge.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/modules/Test.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/modules/Vlan.conf
 %{_mandir}/man1/*.1*
+%{py_sitescriptdir}/func
+%if "%{py_ver}" > "2.4"
+%{py_sitescriptdir}/func-*.egg-info
+%endif
 %dir /var/log/func
