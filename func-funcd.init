@@ -1,10 +1,11 @@
 #!/bin/sh
 #
-# funcd	funcd short service description
+# funcd    Fedora Unified Network Control
 #
-# chkconfig:	2345 98 2
+# chkconfig:	2345 98 02
 #
-# description:	funcd long service description
+# description:  Crazy simple, secure remote management.
+# processname: /usr/bin/funcd
 #
 # $Id$
 
@@ -20,7 +21,7 @@
 # Check that networking is up.
 if is_yes "${NETWORKING}"; then
 	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
-		msg_network_down funcd
+		msg_network_down "funcd"
 		exit 1
 	fi
 else
@@ -29,38 +30,40 @@ fi
 
 start() {
 	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/funcd ]; then
-		msg_starting funcd
-		daemon /usr/bin/funcd --daemon
-		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/funcd
-	else
-		msg_already_running funcd
+	if [ -f /var/lock/subsys/funcd ]; then
+		msg_already_running "funcd"
+		return
 	fi
+
+	msg_starting "funcd"
+	daemon /usr/bin/funcd --daemon
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/funcd
 }
 
 stop() {
-	if [ -f /var/lock/subsys/funcd ]; then
-		# Stop daemons.
-		msg_stopping funcd
-		killproc --pidfile /var/run/funcd.pid funcd -TERM
-		rm -f /var/lock/subsys/funcd
-	else
-		msg_not_running funcd
+	if [ ! -f /var/lock/subsys/funcd ]; then
+		msg_not_running "funcd"
+		return
 	fi
+
+	# Stop daemons.
+	msg_stopping "funcd"
+	killproc --pidfile /var/run/funcd.pid funcd -TERM
+	rm -f /var/lock/subsys/funcd
 }
 
 condrestart() {
-	if [ -f /var/lock/subsys/funcd ]; then
-		stop
-		start
-	else
-		if [ $1 -ne 0 ]; then
-			msg_not_running funcd
-		fi
+	if [ ! -f /var/lock/subsys/funcd ]; then
+		msg_not_running "funcd"
 		RETVAL=$1
+		return
 	fi
+
+	stop
+	start
 }
+
 
 RETVAL=0
 # See how we were called.
