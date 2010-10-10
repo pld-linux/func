@@ -2,7 +2,7 @@
 #
 # funcd	funcd short service description
 #
-# chkconfig:	- 98 2
+# chkconfig:	2345 98 2
 #
 # description:	funcd long service description
 #
