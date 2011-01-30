@@ -11,6 +11,8 @@ Source1:	%{name}-funcd.init
 Patch0:		%{name}-setup.patch
 URL:		https://fedorahosted.org/func/
 BuildRequires:	python
+BuildRequires:	python-modules
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.219
 Requires:	certmaster >= 0.25
 Requires:	python-pyOpenSSL
