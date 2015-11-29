@@ -13,7 +13,7 @@ URL:		https://fedorahosted.org/func/
 BuildRequires:	python
 BuildRequires:	python-modules
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.710
 Requires:	certmaster >= 0.25
 Requires:	python-pyOpenSSL
 Requires:	python-simplejson
